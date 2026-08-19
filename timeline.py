@@ -22,15 +22,15 @@ class PauseResumeButton(QPushButton):
                  height=32):
         super().__init__(parent)
 
-        self._play_normal = load_autocropped(play_image_path).scaledToHeight(height, Qt.SmoothTransformation)
-        self._play_hover = darkened(self._play_normal)
+        self.play_normal = load_autocropped(play_image_path).scaledToHeight(height, Qt.SmoothTransformation)
+        self._play_hover = darkened(self.play_normal)
         self._pause_normal = load_autocropped(pause_image_path).scaledToHeight(height, Qt.SmoothTransformation)
         self._pause_hover = load_autocropped(pause_hover_image_path).scaledToHeight(height, Qt.SmoothTransformation)
 
         self.is_playing = False
         self._hovering = False
 
-        self.setFixedSize(self._play_normal.width() + 6, self._play_normal.height() + 6)
+        self.setFixedSize(self.play_normal.width() + 6, self.play_normal.height() + 6)
         self.setCursor(Qt.PointingHandCursor)
         self.setStyleSheet("""
             QPushButton {
@@ -42,26 +42,26 @@ class PauseResumeButton(QPushButton):
                 border-radius: 6px;
             }
         """)
-        self._refresh_icon()
+        self.refresh_icon()
 
     def set_playing_state(self, is_playing):
         self.is_playing = is_playing
-        self._refresh_icon()
+        self.refresh_icon()
 
-    def _refresh_icon(self):
+    def refresh_icon(self):
         if self.is_playing:
             pixmap = self._pause_hover if self._hovering else self._pause_normal
         else:
-            pixmap = self._play_hover if self._hovering else self._play_normal
+            pixmap = self._play_hover if self._hovering else self.play_normal
         self.setIcon(QIcon(pixmap))
         self.setIconSize(pixmap.size())
 
     def enterEvent(self, event):
         self._hovering = True
-        self._refresh_icon()
+        self.refresh_icon()
         super().enterEvent(event)
 
     def leaveEvent(self, event):
         self._hovering = False
-        self._refresh_icon()
+        self.refresh_icon()
         super().leaveEvent(event)

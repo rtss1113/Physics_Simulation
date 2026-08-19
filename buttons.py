@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from cannon import load_autocropped
 
 
-def _load_horizontal(image_path, height):
+def load_horizontal(image_path, height):
     pixmap = load_autocropped(image_path)
     if pixmap.isNull():
         return pixmap
@@ -13,7 +13,7 @@ def _load_horizontal(image_path, height):
     return rotated.scaledToHeight(height, Qt.SmoothTransformation)
 
 
-def _darkened(pixmap):
+def darkened(pixmap):
     result = pixmap.copy()
     painter = QPainter(result)
     painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
@@ -22,7 +22,7 @@ def _darkened(pixmap):
     return result
 
 
-class _ImageHoverButton(QPushButton):
+class ImageHoverButton(QPushButton):
     def __init__(self, parent, normal_pixmap, hover_pixmap):
         super().__init__(parent)
 
@@ -55,14 +55,14 @@ class _ImageHoverButton(QPushButton):
         super().leaveEvent(event)
 
 
-class FireButton(_ImageHoverButton):
+class FireButton(ImageHoverButton):
     def __init__(self, parent=None, image_path="assets/white fire button.png", height=50):
-        normal_pixmap = _load_horizontal(image_path, height)
-        hover_pixmap = _darkened(normal_pixmap) if not normal_pixmap.isNull() else normal_pixmap
+        normal_pixmap = load_horizontal(image_path, height)
+        hover_pixmap = darkened(normal_pixmap) if not normal_pixmap.isNull() else normal_pixmap
         super().__init__(parent, normal_pixmap, hover_pixmap)
 
 
-class ResetButton(_ImageHoverButton):
+class ResetButton(ImageHoverButton):
     def __init__(self, parent=None,
                  normal_image_path="assets/resetlightgrey.png",
                  hover_image_path="assets/resetdarkgrey.png",
@@ -72,7 +72,7 @@ class ResetButton(_ImageHoverButton):
         super().__init__(parent, normal_pixmap, hover_pixmap)
 
 
-class SlowDownButton(_ImageHoverButton):
+class SlowDownButton(ImageHoverButton):
     def __init__(self, parent=None,
                  normal_image_path="assets/going back light grey button.png",
                  hover_image_path="assets/going back dark grey button.png",
@@ -82,7 +82,7 @@ class SlowDownButton(_ImageHoverButton):
         super().__init__(parent, normal_pixmap, hover_pixmap)
 
 
-class SpeedUpButton(_ImageHoverButton):
+class SpeedUpButton(ImageHoverButton):
     def __init__(self, parent=None,
                  normal_image_path="assets/speed up light grey button.png",
                  hover_image_path="assets/speed up dark grey button.png",
