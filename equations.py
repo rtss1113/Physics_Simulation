@@ -1,6 +1,6 @@
 import math
 
-def initial_velocity_components(initial_velocity,firing_angle):
+def initial_velocity_components(initial_velocity, firing_angle):
     firing_angle_rad = math.radians(firing_angle)
     vi_hori = initial_velocity * math.cos(firing_angle_rad)
     vi_vert = initial_velocity * math.sin(firing_angle_rad)
@@ -9,8 +9,8 @@ def initial_velocity_components(initial_velocity,firing_angle):
 def velocity_components(initial_velocity, firing_angle, time, gravity):
     vi_hori, v_vert = initial_velocity_components(initial_velocity, firing_angle)
 
-    vf_hori = vi_hori +(0*time)
-    vf_vert = v_vert +(-gravity *time)
+    vf_hori = vi_hori + (0 * time)
+    vf_vert = v_vert + (-gravity * time)
 
     return vf_hori, vf_vert
 
@@ -27,7 +27,7 @@ def total_acceleration(a_hori, a_vert):
     return math.sqrt(a_hori ** 2 + a_vert ** 2)
 
 def ke(mass, v_total):
-    return 0.5 * mass * v_total **2
+    return 0.5 * mass * v_total ** 2
 
 def gpe(mass, gravity, height):
     return mass * gravity * height

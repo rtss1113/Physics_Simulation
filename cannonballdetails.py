@@ -9,7 +9,6 @@ class CannonballDetails(QWidget):
         self.main_window = main_window
         self.setWindowTitle("Cannonball Details")
         self.setFixedSize(600, 400)
-        self.setStyleSheet("font-family: Arial;")
         self.setStyleSheet("font-size: 13px;")
 
 

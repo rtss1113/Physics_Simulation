@@ -5,11 +5,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QColor, QRadialGradient, QPen, QPolygonF
 from PyQt5.QtCore import Qt, QTimer, QPointF, pyqtSignal
 
-from constants import DEFAULT_DRAG_COEFFICIENT
-
-STEP_INTERVAL_MS = 16
-BASE_SIMULATION_SPEED = 2.5
-CANNONBALL_VISUAL_SCALE = 15
+from constants import DEFAULT_DRAG_COEFFICIENT, STEP_INTERVAL_MS, BASE_SIMULATION_SPEED, CANNONBALL_VISUAL_SCALE
 
 
 class CannonballPreview(QWidget):
@@ -106,7 +102,7 @@ class CannonballFlight(QWidget):
         self.time_elapsed = 0.0
 
         self.space = pymunk.Space()
-        self.space.gravity = (0, 0)
+        self.space.gravity = (0, 0)  # gravity handled manually in _velocity_func so drag can be layered on top
 
         moment = pymunk.moment_for_circle(mass_kg, 0, radius_m)
         self.body = pymunk.Body(mass_kg, moment)
@@ -132,6 +128,7 @@ class CannonballFlight(QWidget):
         self.setFixedSize(diameter_px, diameter_px)
 
     def _velocity_func(self, body, gravity, damping, dt):
+        # overriding pymunk's built in integrator so drag scales with actual speed^2 instead of a flat damping value
         g = self.main_window.gravity
 
         vx, vy = body.velocity
@@ -192,7 +189,7 @@ class CannonballFlight(QWidget):
         x_m, y_m = self.body.position
         vx, vy = self.body.velocity
 
-        ground_level = self.radius_m
+        ground_level = self.radius_m  # ball center sits one radius above y=0 when resting on the ground
         landed = y_m <= ground_level
 
         if landed:

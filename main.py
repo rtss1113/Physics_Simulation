@@ -1,11 +1,10 @@
-import os, sys
+import sys
 import math
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from settings import Settings
 from basicparameters import BasicParameters
 from visualdisplay import VisualDisplay
 from cannonsettings import CannonSettings
@@ -17,11 +16,7 @@ from buttons import FireButton, ResetButton, SlowDownButton, SpeedUpButton
 from cannonballflying import CannonballFlight, CannonballPreview, VectorArrow
 from timeline import PauseResumeButton
 from paths import resource_path
-
-VELOCITY_ARROW_SCALE = 3
-ACCELERATION_ARROW_SCALE = 3
-SPEED_LEVELS = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
-
+from constants import *
 
 class Program(QWidget):
     def __init__(self):
@@ -41,14 +36,14 @@ class Program(QWidget):
         self.cannon_settings_window = None
         self.cannonball_details_window = None
 
-        self.air_density = 1.225
-        self.gravity = 9.81
+        self.air_density = DEFAULT_AIR_DENSITY
+        self.gravity = DEFAULT_GRAVITY
         self.air_resistance_enabled = False
-        self.initial_velocity = 30.0
-        self.cannonball_mass = 10.0
-        self.cannon_height = 0.0
-        self.cannonball_radius = 20.0
-        self.firing_angle = 45.0
+        self.initial_velocity = DEFAULT_CANNON_INITIAL_VELOCITY
+        self.cannonball_mass = DEFAULT_CANNONBALL_MASS
+        self.cannon_height = DEFAULT_CANNON_HEIGHT
+        self.cannonball_radius = DEFAULT_CANNONBALL_RADIUS
+        self.firing_angle = DEFAULT_FIRING_ANGLE
         self.time = 0.0
 
         self.v_horizontal = 0.0
@@ -92,7 +87,7 @@ class Program(QWidget):
         """)
         self.update_target_position_label(self.target.x(), self.target.y())
 
-        self.wall_width_ratio = 78 / 1774
+        self.wall_width_ratio = 78 / 1774  # measured off the background png, don't change unless the art changes
 
         self.cannon = Cannon(self, ground_y=self.origin_y + 0, top_y=0, lift_height = 60, head_height = 28)
         self.position_cannon_x()
@@ -167,8 +162,6 @@ class Program(QWidget):
         self.target.raise_()
         self.target_position_label.show()
         self.target_position_label.raise_()
-
-        self.settings = Settings()
 
         self.settings_panel = QPushButton("   Settings    ▼")
         self.settings_panel.clicked.connect(self.toggle_settings)
@@ -463,6 +456,7 @@ class Program(QWidget):
         self.flying_cannonball.show()
         self.flying_cannonball.raise_()
 
+        # rough no-drag estimate just to size the timeline slider, real flight can run longer/shorter
         discriminant = (velocity_y ** 2) + (2 * self.gravity * start_y_m)
         t_estimate = (velocity_y + math.sqrt(max(discriminant, 0))) / self.gravity
         self.flight_duration_estimate = max(0.5, t_estimate)
@@ -600,6 +594,7 @@ class Program(QWidget):
             target_t = (current_progress / 1000) * self.flight_duration_estimate if self.flight_duration_estimate > 0 else 0
 
             if self.flight_history:
+                # find the recorded frame closest to where the scrubber was left, then resume from there
                 closest_index = min(
                     range(len(self.flight_history)),
                     key=lambda i: abs(self.flight_history[i][0] - target_t)
@@ -668,6 +663,7 @@ class Program(QWidget):
             self.cannon_settings_window.sync_cannon_height_display(height_metres)
 
     def paintEvent(self, event):
+        # just stretches the background art to fill the window, ignores aspect ratio on purpose
         painter = QPainter(self)
         scaled = self.background.scaled(self.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         painter.drawPixmap(0, 0, scaled)

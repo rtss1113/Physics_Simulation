@@ -1,5 +1,3 @@
-import os
-import sys
 import math
 
 from PyQt5.QtWidgets import QWidget
@@ -41,6 +39,9 @@ class Cannon(QWidget):
         raw_head = load_autocropped(head_path)
         self.head_pixmap = raw_head.scaledToHeight(head_height, Qt.SmoothTransformation) if not raw_head.isNull() else raw_head
 
+        # these ratios were eyeballed against the sprite sheet - the pivot point (where the
+        # barrel rotates from) and the muzzle (where the ball actually spawns) aren't in the
+        # image metadata anywhere so they just get hardcoded as fractions of the pixmap size
         self.head_pivot_x = int(self.head_pixmap.width() * 0.26)
         self.head_pivot_y = int(self.head_pixmap.height() * 0.66)
 
@@ -58,6 +59,8 @@ class Cannon(QWidget):
         max_x = max(self.lift_pixmap.width(), self.head_offset_x + self.head_pixmap.width())
         max_y = max(self.lift_pixmap.height(), self.head_offset_y + self.head_pixmap.height())
 
+        # widget needs to be big enough to contain the head at every rotation, not just angle 0,
+        # so work out the farthest any head corner gets from the pivot and pad the bounds by that
         pivot_x = self.head_offset_x + self.head_pivot_x
         pivot_y = self.head_offset_y + self.head_pivot_y
         corners = [
@@ -102,6 +105,8 @@ class Cannon(QWidget):
         self.update()
 
     def muzzle_point(self):
+        # rotate the muzzle point around the pivot by the same angle paintEvent rotates the sprite,
+        # otherwise the cannonball spawns from wherever the muzzle sits at angle 0 every time
         angle = math.radians(self.head_tilt_fix - self.firing_angle)
         dx = self.head_muzzle_x - self.head_pivot_x
         dy = self.head_muzzle_y - self.head_pivot_y
