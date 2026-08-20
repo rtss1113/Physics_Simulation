@@ -10,7 +10,7 @@ class CannonballDetails(QWidget):
         self.setWindowTitle("Cannonball Details")
         self.setFixedSize(600, 400)
         self.setStyleSheet("font-family: Arial;")
-        self.setStyleSheet("font-size: 15px;")
+        self.setStyleSheet("font-size: 13px;")
 
 
         cannonball_title_label = QLabel("Cannonball Details")

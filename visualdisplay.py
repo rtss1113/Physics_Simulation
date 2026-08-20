@@ -11,12 +11,12 @@ class VisualDisplay(QWidget):
         self.setFixedSize(250, 100)
         self.setStyleSheet("font-family: Arial;")
 
-        acceleration_arrows_label = QLabel("Show Acceleration arrows")
+        acceleration_arrows_label = QLabel("Show Acceleration arrow(Blue)")
         self.acceleration_arrows_checkbox = QCheckBox()
         self.acceleration_arrows_checkbox.setChecked(main_window.show_acceleration_arrows)
         self.acceleration_arrows_checkbox.stateChanged.connect(self.change_show_acceleration_arrows)
 
-        velocity_arrows_label = QLabel("Show Velocity arrows")
+        velocity_arrows_label = QLabel("Show Velocity arrow(Red)")
         self.velocity_arrows_checkbox = QCheckBox()
         self.velocity_arrows_checkbox.setChecked(main_window.show_velocity_arrows)
         self.velocity_arrows_checkbox.stateChanged.connect(self.change_show_velocity_arrows)
